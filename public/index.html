@@ -78,6 +78,14 @@
         </svg>
         <span class="fw-bold">NovaFoot</span>
       </a>
+      <!-- dentro del navbar: evita que el form recargue -->
+      <div>
+        <form id="search-form" onsubmit="return false;">
+          <input id="search-name" type="search" name="search" class="form-control" placeholder="Buscar productos..."/>
+        </form>
+      </div>
+
+
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navNf" aria-controls="navNf" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -102,6 +110,19 @@
 
   <!-- Listado de productos (se mantiene el id y estructura para JS existente) -->
   <main class="container py-4">
+    <!-- FILTROS -->
+    <div class="row mb-3 g-2 align-items-center">
+      <div class="col-12 col-md-6">
+        <!-- el input del navbar también filtra por nombre; este es opcional como duplicado -->
+        <input id="filter-name" class="form-control" placeholder="Buscar por nombre o descripción..." />
+      </div>
+      <div class="col-6 col-md-3">
+        <input id="filter-min" type="number" class="form-control" placeholder="Precio mínimo (COP)" step="1000" min="0" />
+      </div>
+      <div class="col-6 col-md-3">
+        <input id="filter-max" type="number" class="form-control" placeholder="Precio máximo (COP)" step="1000" min="0" />
+      </div>
+    </div>
     <div id="product-list" class="row g-4"></div>
   </main>
 
