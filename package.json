@@ -2,22 +2,39 @@
   "name": "zapateria-app",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
     "build": "tsc",
+    "dev": "node --import tsx src/server.ts",
     "start": "node dist/server.js"
   },
   "dependencies": {
     "cookie-session": "^2.0.0",
-    "cors": "^2.8.5",
-    "express": "^4.19.2"
+    "csurf": "^1.11.0",
+    "express": "^4.18.2",
+    "express-rate-limit": "^6.9.0",
+    "helmet": "^7.0.0",
+    "jsonwebtoken": "^9.0.0",
+    "socket.io": "^4.8.1"
   },
   "devDependencies": {
-    "@types/cookie-session": "^2.0.45",
+    "@types/cookie-session": "^2.0.49",
     "@types/cors": "^2.8.19",
+    "@types/csurf": "^1.11.5",
     "@types/express": "^4.17.21",
+    "@types/express-rate-limit": "^5.1.3",
+    "@types/express-session": "^1.18.2",
+    "@types/helmet": "^0.0.48",
+    "@types/jest": "^30.0.0",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^20.9.0",
+    "@types/selenium-webdriver": "^4.35.3",
+    "jest": "^30.2.0",
+    "jest-environment-node": "^30.2.0",
+    "selenium-webdriver": "^4.38.0",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
-    "typescript": "^5.9.3"
+    "tsx": "^4.6.2",
+    "typescript": "^5.2.2"
   }
 }

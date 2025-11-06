@@ -34,12 +34,7 @@ function renderProducts(products) {
     btn.addEventListener('click', async () => {
       const productId = Number(btn.dataset.id);
       const qty = Number(btn.dataset.qty);
-      await fetch('/api/cart/add', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ productId, qty })
-      });
-      updateCartCount();
+      await addToCart(productId, qty);
     });
   });
 }
@@ -119,3 +114,71 @@ if (searchForm) {
 
 // inicio
 loadProducts();
+
+// Agregar esto al inicio del archivo
+const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+
+async function addToCart(productId, qty) {
+  const res = await fetch('/api/cart/add', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'CSRF-Token': csrfToken
+    },
+    body: JSON.stringify({ productId, qty })
+  });
+  return res.json();
+}
+
+// conectar socket (funciona desde cualquier página donde se cargue app.js)
+const socket = io();
+
+// helper: recalcula y pinta contador del carrito
+function updateCartCount(cart) {
+  const count = Array.isArray(cart) ? cart.reduce((s, it) => s + (it.qty || 0), 0) : 0;
+  const el = document.getElementById("cart-count");
+  if (el) el.textContent = String(count);
+}
+
+// helper: actualizar botones de "Agregar" según carrito (opcional)
+function updateProductButtons(cart) {
+  if (!Array.isArray(cart)) return;
+  // si tus botones tienen attribute data-product-id
+  document.querySelectorAll(".add-to-cart").forEach(btn => {
+    const pid = Number(btn.getAttribute("data-product-id"));
+    const item = cart.find(i => i.productId === pid);
+    // ejemplo: deshabilitar si ya hay stock 0 o comportamiento personalizado
+    if (item && item.qty >= 999999) { // ajustar lógica si tienes límites
+      btn.disabled = true;
+    } else {
+      btn.disabled = false;
+    }
+  });
+}
+
+// cuando el servidor notifica cambio en carrito
+socket.on("cartUpdated", (cart) => {
+  console.log("cartUpdated event received:", cart);
+  updateCartCount(cart);
+  updateProductButtons(cart);
+
+  // si estás mostrando fragmentos del carrito en la home, refresca esa UI:
+  if (typeof renderCart === "function") {
+    renderCart(cart);
+  }
+});
+
+// Si quieres sincronizar inicialmente el contador al cargar la página
+async function syncCartCountOnLoad() {
+  try {
+    const res = await fetch("/api/cart");
+    if (res.ok) {
+      const cart = await res.json();
+      updateCartCount(cart);
+      updateProductButtons(cart);
+    }
+  } catch (err) {
+    console.warn("No se pudo sincronizar carrito:", err);
+  }
+}
+syncCartCountOnLoad();
